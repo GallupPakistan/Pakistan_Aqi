@@ -28,11 +28,11 @@ PALETTE = [
     dict(aqi=115, accent=(150, 146, 138), mid=(104, 100, 95),  dark=(48, 46, 44),  tint=(241, 240, 237),
          sky_top=(172, 170, 164), sky_bot=(226, 224, 219), smog=(196, 193, 186), haze=0.50, veil=0.10, sun=0.35, card=0.92),
     dict(aqi=150, accent=(122, 122, 128), mid=(82, 82, 88),    dark=(36, 36, 42),  tint=(236, 236, 239),
-         sky_top=(134, 134, 138), sky_bot=(202, 202, 206), smog=(150, 150, 154), haze=0.62, veil=0.17, sun=0.12, card=0.89),
+         sky_top=(176, 176, 182), sky_bot=(226, 226, 230), smog=(190, 190, 194), haze=0.50, veil=0.10, sun=0.12, card=0.93),
     dict(aqi=200, accent=(98, 98, 108),   mid=(62, 62, 71),    dark=(26, 26, 33),  tint=(230, 230, 235),
-         sky_top=(96, 96, 104),   sky_bot=(166, 166, 172), smog=(112, 112, 118), haze=0.74, veil=0.24, sun=0.00, card=0.85),
+         sky_top=(166, 166, 174), sky_bot=(218, 218, 224), smog=(176, 176, 182), haze=0.55, veil=0.12, sun=0.00, card=0.93),
     dict(aqi=300, accent=(72, 68, 72),    mid=(44, 42, 46),    dark=(18, 17, 19),  tint=(224, 222, 224),
-         sky_top=(58, 56, 60),    sky_bot=(108, 106, 110), smog=(72, 70, 74),   haze=0.86, veil=0.30, sun=0.00, card=0.80),
+         sky_top=(156, 154, 160), sky_bot=(210, 208, 214), smog=(160, 158, 164), haze=0.60, veil=0.14, sun=0.00, card=0.93),
 ]
 _AN = [p["aqi"] for p in PALETTE]
 
@@ -83,7 +83,7 @@ def status_card(aqi, head, source, dot="#999"):
             f'background:linear-gradient(90deg,rgba({_rgb(c["accent"])},.40),rgba({_rgb(c["accent"])},.06))">'
             f'<div class="sl">AIR RIGHT NOW</div>'
             f'<div class="sh"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;'
-            f'background:{dot};margin-right:8px;box-shadow:0 0 0 2px rgba(255,255,255,.55)"></span>{head}</div>'
+            f'background:{dot};margin-right:8px;box-shadow:0 0 0 2px rgba(0,0,0,.15)"></span>{head}</div>'
             f'<div class="sv">AQI {aqi:.0f} · {scope}</div></div>')
 
 
@@ -93,7 +93,7 @@ def theme_css(aqi):
     brand = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none'>"
              "<circle cx='20' cy='20' r='18' stroke='rgb(%s)' stroke-width='2'/>"
              "<path d='M9 15c4-3 7 3 11 0s7-3 11 0M9 21c4-3 7 3 11 0s7-3 11 0M9 27c4-3 7 3 11 0s7-3 11 0' "
-             "stroke='white' stroke-width='2' stroke-linecap='round'/></svg>") % _rgb(c["soft"])
+             "stroke='rgb(%s)' stroke-width='2' stroke-linecap='round'/></svg>") % (_rgb(c["strong"]), _rgb(c["mid"]))
     css = """
 <style>
 /* ---------- page: sky + smog behind the content ---------- */
@@ -149,19 +149,19 @@ def theme_css(aqi):
 /* ---------- sidebar ---------- */
 section[data-testid="stSidebar"]{background:linear-gradient(180deg, rgb(__DARK__) 0%, rgb(__SIDE2__) 100%) !important}
 .brand .mark{background-image:url("data:image/svg+xml,__BRAND__") !important}
-.brand .b2, .side-h, .pf-h{color:rgb(__SOFT__) !important}
-.side-h{border-bottom:1px solid rgba(__SOFT__,.35) !important}
-section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover{background:rgba(__SOFT__,.18) !important}
+.brand .b2, .side-h, .pf-h{color:rgb(__MID__) !important}
+.side-h{border-bottom:1px solid rgba(__ACC__,.35) !important}
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover{background:rgba(__ACC__,.15) !important}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked){
-  background:linear-gradient(90deg,rgba(__SOFT__,.38),rgba(__SOFT__,.06)) !important;
-  border-color:rgba(__SOFT__,.75) !important;box-shadow:inset 3px 0 0 rgb(__SOFT__) !important}
+  background:linear-gradient(90deg,rgba(__ACC__,.30),rgba(__ACC__,.05)) !important;
+  border-color:rgba(__ACC__,.65) !important;box-shadow:inset 3px 0 0 rgb(__STRONG__) !important}
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"]{
   background:rgb(__STRONG__) !important;border-color:rgb(__STRONG__) !important}
 section[data-testid="stSidebar"] [data-baseweb="tag"]{background:rgb(__STRONG__) !important}
 section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"]{background-color:rgb(__SOFT__) !important}
-section[data-testid="stSidebar"] [data-testid="stSidebarContent"]{scrollbar-color:rgb(__SOFT__) rgba(255,255,255,.06) !important}
-section[data-testid="stSidebar"] *::-webkit-scrollbar-thumb{background:rgb(__SOFT__) !important}
-.sstat .sl{color:rgb(__SOFT__) !important}
+section[data-testid="stSidebar"] [data-testid="stSidebarContent"]{scrollbar-color:rgb(__ACC__) rgba(0,0,0,.05) !important}
+section[data-testid="stSidebar"] *::-webkit-scrollbar-thumb{background:rgb(__ACC__) !important}
+.sstat .sl{color:rgb(__MID__) !important}
 
 /* ---------- cards, KPIs, insights ---------- */
 .kc{background:linear-gradient(135deg, rgb(__DARK__), rgb(__MID__)) !important;
