@@ -220,19 +220,14 @@ section[data-testid="stSidebar"] [data-baseweb="tag"] span{color:#fff !important
 section[data-testid="stSidebar"] [data-baseweb="tag"] svg{fill:#fff}
 section[data-testid="stSidebar"] div[data-baseweb="select"] > div:first-child{max-height:132px;overflow-y:auto}
 .pf-h{font-size:.72rem;font-weight:700;letter-spacing:.14em;color:#b8c7ee;margin:16px 0 2px 0}
-section[data-testid="stSidebar"] [data-testid="stButtonGroup"] button,
 section[data-testid="stSidebar"] button[data-testid*="pills"]{background:#fff !important;border:1px solid #fff !important;
-  border-radius:999px !important;padding:2px 14px !important;min-height:34px;box-shadow:none;color:#14213d !important}
-section[data-testid="stSidebar"] [data-testid="stButtonGroup"] button *,
-section[data-testid="stSidebar"] button[data-testid*="pills"] *{color:#14213d !important;
-  -webkit-text-fill-color:#14213d !important;font-weight:500;margin:0;opacity:1 !important}
-section[data-testid="stSidebar"] [data-testid="stButtonGroup"] button:hover,
+  border-radius:999px !important;padding:2px 14px !important;min-height:34px;box-shadow:none}
+section[data-testid="stSidebar"] button[data-testid*="pills"] p,
+section[data-testid="stSidebar"] button[data-testid*="pills"] span{color:#14213d !important;font-weight:500;margin:0}
 section[data-testid="stSidebar"] button[data-testid*="pills"]:hover{filter:brightness(.93)}
-section[data-testid="stSidebar"] button[data-testid*="pillsActive"],
-section[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[kind="pillsActive"]{background:#3b82f6 !important;border-color:#3b82f6 !important;color:#fff !important}
-section[data-testid="stSidebar"] button[data-testid*="pillsActive"] *,
-section[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[kind="pillsActive"] *{color:#fff !important;
-  -webkit-text-fill-color:#fff !important}
+section[data-testid="stSidebar"] button[data-testid*="pillsActive"]{background:#3b82f6 !important;border-color:#3b82f6 !important}
+section[data-testid="stSidebar"] button[data-testid*="pillsActive"] p,
+section[data-testid="stSidebar"] button[data-testid*="pillsActive"] span{color:#fff !important}
 section[data-testid="stSidebar"] div[role="radiogroup"]{gap:5px}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label{background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:7px 12px;margin:0;width:100%;
