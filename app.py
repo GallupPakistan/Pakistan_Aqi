@@ -202,6 +202,8 @@ nav_css = "".join(
 
 STATIC_CSS = """
 <style>
+/* always render with light-mode form controls/scrollbars, even when Chrome is in dark mode */
+:root, .stApp{color-scheme:light !important}
 section[data-testid="stSidebar"]{background:linear-gradient(180deg,#0b0a26 0%,#16143d 100%)}
 section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3,
@@ -223,14 +225,11 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] > div:first-child{ma
 section[data-testid="stSidebar"] button[data-testid*="pills"]{background:#fff !important;border:1px solid #fff !important;
   border-radius:999px !important;padding:2px 14px !important;min-height:34px;box-shadow:none}
 section[data-testid="stSidebar"] button[data-testid*="pills"] p,
-section[data-testid="stSidebar"] button[data-testid*="pills"] span,
-section[data-testid="stSidebar"] button[data-testid*="pills"] div,
-section[data-testid="stSidebar"] button[data-testid*="pills"] *{color:#14213d !important;-webkit-text-fill-color:#14213d !important;opacity:1 !important;font-weight:500;margin:0}
+section[data-testid="stSidebar"] button[data-testid*="pills"] span{color:#14213d !important;font-weight:500;margin:0}
 section[data-testid="stSidebar"] button[data-testid*="pills"]:hover{filter:brightness(.93)}
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"]{background:#3b82f6 !important;border-color:#3b82f6 !important}
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"] p,
-section[data-testid="stSidebar"] button[data-testid*="pillsActive"] span,
-section[data-testid="stSidebar"] button[data-testid*="pillsActive"] *{color:#fff !important;-webkit-text-fill-color:#fff !important}
+section[data-testid="stSidebar"] button[data-testid*="pillsActive"] span{color:#fff !important}
 section[data-testid="stSidebar"] div[role="radiogroup"]{gap:5px}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label{background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:7px 12px;margin:0;width:100%;
