@@ -189,9 +189,9 @@ NAV_ICONS = [
     "<polyline points='16,3 21,3 21,8'/>",
 ]
 BRAND_SVG = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none'>"
-             "<circle cx='20' cy='20' r='18' stroke='%233b5bdb' stroke-width='2'/>"
+             "<circle cx='20' cy='20' r='18' stroke='%236fa8ff' stroke-width='2'/>"
              "<path d='M9 15c4-3 7 3 11 0s7-3 11 0M9 21c4-3 7 3 11 0s7-3 11 0M9 27c4-3 7 3 11 0s7-3 11 0' "
-             "stroke='%231f2a44' stroke-width='2' stroke-linecap='round'/></svg>")
+             "stroke='%23dbe7ff' stroke-width='2' stroke-linecap='round'/></svg>")
 nav_css = "".join(
     '.block-container div[role="radiogroup"] > label:nth-child(%d) [data-testid="stMarkdownContainer"] p::before'
     '{background-image:%s}'
@@ -202,25 +202,25 @@ nav_css = "".join(
 
 STATIC_CSS = """
 <style>
-section[data-testid="stSidebar"]{background:linear-gradient(180deg,#ffffff 0%,#eef2f8 100%)}
+section[data-testid="stSidebar"]{background:linear-gradient(180deg,#0b0a26 0%,#16143d 100%)}
 section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3,
-section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] li{color:#1f2a44}
+section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] li{color:#f1f1f7}
 section[data-testid="stSidebar"] div[data-baseweb="select"] input{color:#111 !important}
 .brand{display:flex;align-items:center;gap:12px;margin:0 0 12px 0}
 .brand .mark{width:40px;height:40px;flex:none;background-size:contain;background-repeat:no-repeat;
   background-image:url("data:image/svg+xml,__BRAND__")}
-.brand .b1{font-size:.95rem;font-weight:700;letter-spacing:.16em;color:#1f2a44}
-.brand .b2{font-size:.78rem;color:#3b5bdb;letter-spacing:.04em;margin-top:2px}
-.side-h{font-size:.74rem;letter-spacing:.2em;color:#3b5bdb;margin:12px 0 6px 0;padding-bottom:6px;
-  border-bottom:1px solid rgba(59,91,219,.25)}
+.brand .b1{font-size:.95rem;font-weight:700;letter-spacing:.16em;color:#fff}
+.brand .b2{font-size:.78rem;color:#9db8ff;letter-spacing:.04em;margin-top:2px}
+.side-h{font-size:.74rem;letter-spacing:.2em;color:#9db8ff;margin:12px 0 6px 0;padding-bottom:6px;
+  border-bottom:1px solid rgba(157,184,255,.25)}
 section[data-testid="stSidebar"] [data-baseweb="tag"]{background:#3b82f6 !important;border-radius:999px !important;
   height:26px;margin:2px 3px 2px 0}
 section[data-testid="stSidebar"] [data-baseweb="tag"] span{color:#fff !important;font-size:.8rem !important}
 section[data-testid="stSidebar"] [data-baseweb="tag"] svg{fill:#fff}
 section[data-testid="stSidebar"] div[data-baseweb="select"] > div:first-child{max-height:132px;overflow-y:auto}
-.pf-h{font-size:.72rem;font-weight:700;letter-spacing:.14em;color:#4b5b7c;margin:16px 0 2px 0}
-section[data-testid="stSidebar"] button[data-testid*="pills"]{background:#fff !important;border:1px solid #cbd5e1 !important;
+.pf-h{font-size:.72rem;font-weight:700;letter-spacing:.14em;color:#b8c7ee;margin:16px 0 2px 0}
+section[data-testid="stSidebar"] button[data-testid*="pills"]{background:#fff !important;border:1px solid #fff !important;
   border-radius:999px !important;padding:2px 14px !important;min-height:34px;box-shadow:none}
 section[data-testid="stSidebar"] button[data-testid*="pills"] p,
 section[data-testid="stSidebar"] button[data-testid*="pills"] span,
@@ -232,10 +232,10 @@ section[data-testid="stSidebar"] button[data-testid*="pillsActive"] p,
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"] span,
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"] *{color:#fff !important;-webkit-text-fill-color:#fff !important}
 section[data-testid="stSidebar"] div[role="radiogroup"]{gap:5px}
-section[data-testid="stSidebar"] div[role="radiogroup"] > label{background:rgba(0,0,0,.03);
-  border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 12px;margin:0;width:100%;
+section[data-testid="stSidebar"] div[role="radiogroup"] > label{background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:7px 12px;margin:0;width:100%;
   transition:all .2s ease}
-section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover{background:rgba(59,91,219,.10)}
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover{background:rgba(111,168,255,.14)}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label > div:first-child{position:absolute;opacity:0;
   width:0;height:0;overflow:hidden}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked){
@@ -248,8 +248,8 @@ section[data-testid="stSidebar"] div[role="radiogroup"] > label [data-testid="st
   background-size:contain;background-repeat:no-repeat;opacity:.9}
 section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) p::before{
   filter:brightness(1.7);opacity:1}
-.pill{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:rgba(0,0,0,.05);
-  border:1px solid rgba(0,0,0,.15);border-radius:999px;padding:4px 14px;font-size:.84rem}
+.pill{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:4px 14px;font-size:.84rem}
 .pill .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .verdict{background:rgba(128,128,128,.10);border-radius:10px;padding:14px 18px;margin:6px 0 16px 0;
   line-height:1.6}
@@ -274,11 +274,11 @@ section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checke
 .hero .sdot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.6);flex:none}
 .hero .ssrc{opacity:.8;font-size:.82rem}
 .hero .advice{margin-top:4px;font-size:.93rem;opacity:.95}
-.sstat{background:rgba(0,0,0,.03);border-radius:10px;border-left:4px solid #888;padding:10px 12px;
+.sstat{background:rgba(255,255,255,.06);border-radius:10px;border-left:4px solid #888;padding:10px 12px;
   margin:16px 0 4px 0}
-.sstat .sl{font-size:.66rem;letter-spacing:.22em;color:#3b5bdb}
-.sstat .sh{font-size:1rem;font-weight:700;color:#1f2a44;margin-top:2px}
-.sstat .sv{font-size:.8rem;color:#4b5b7c}
+.sstat .sl{font-size:.66rem;letter-spacing:.22em;color:#9db8ff}
+.sstat .sh{font-size:1rem;font-weight:700;color:#fff;margin-top:2px}
+.sstat .sv{font-size:.8rem;color:#c9d6f5}
 .hero > .wm{position:absolute !important;right:48px;top:50%;transform:translateY(-50%);width:170px;height:170px;opacity:.16;z-index:0 !important;pointer-events:none}
 @media (max-width:760px){.hero > .wm{display:none}}
 /* ---- top tab bar (colours come from theme.py) ---- */
@@ -299,7 +299,7 @@ section[data-testid="stSidebar"] > div:first-child,
 section[data-testid="stSidebar"] [data-testid="stSidebarContent"]{height:100vh !important;height:100dvh !important;
   max-height:100dvh;overflow-y:auto !important;overflow-x:hidden !important;box-sizing:border-box;
   overscroll-behavior:contain;scroll-behavior:smooth;scrollbar-width:thin;
-  scrollbar-color:#6fa8ff rgba(0,0,0,.05);padding-bottom:90px}
+  scrollbar-color:#6fa8ff rgba(255,255,255,.06);padding-bottom:90px}
 section[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.7rem}
 section[data-testid="stSidebar"] *::-webkit-scrollbar{width:8px}
 section[data-testid="stSidebar"] *::-webkit-scrollbar-track{background:rgba(255,255,255,.06);border-radius:8px}
