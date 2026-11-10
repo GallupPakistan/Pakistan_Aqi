@@ -224,6 +224,10 @@ def apply_hourly(h):
 
 
 sidebar_filters(daily)
+st.sidebar.markdown('<div class="pf-h">SMOG CLOUDS</div>', unsafe_allow_html=True)
+_fog_ctl = st.sidebar.toggle if hasattr(st.sidebar, "toggle") else st.sidebar.checkbox
+FOG_ON = _fog_ctl("Roaming smog clouds", value=True, key="fog_on",
+                  help="Animated smog drifting across the page. It gets denser as the AQI rises. Turn off for a calm page.")
 with st.sidebar.expander("Data files"):
     for _k, _v in DEFAULT_FILES.items():
         st.write((":green[found] " if find_file(_v) else ":red[missing] ") + _v)
@@ -252,7 +256,7 @@ def paint(aqi, source):
     cat = aqi_cat(aqi)
     dot = "#1f9d55" if cat in ("Good", "Moderate") else AQI_COLORS.get(cat, "#999")
     set_plotly_colors(aqi)
-    atm_slot.markdown(theme_css(aqi), unsafe_allow_html=True)
+    atm_slot.markdown(theme_css(aqi, FOG_ON), unsafe_allow_html=True)
     render_banner(banner_slot, aqi, source, page)
     side_status.markdown(status_card(aqi, HEALTH.get(cat, ("Air quality", ""))[0], source, dot),
                          unsafe_allow_html=True)
