@@ -1,0 +1,2 @@
+tuple1 = ()
+print ("tuple1: ", tuple1, len(tuple1))
