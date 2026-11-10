@@ -509,6 +509,22 @@ html body section[data-testid="stSidebar"] :is(button[data-testid*="pillsActive"
 html body section[data-testid="stSidebar"] :is(button[data-testid*="pillsActive"], button[kind="pillsActive"]) *{
   color:#fff !important;-webkit-text-fill-color:#fff !important;opacity:1 !important}
 
+
+/* fallback for newer Streamlit DOM: pills container by key/testid, selected state via aria-pressed */
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button{
+  background:rgba(255,255,255,.92) !important;color:rgb(__DARK__) !important;-webkit-text-fill-color:rgb(__DARK__) !important;
+  border:1px solid rgba(__SOFT__,.75) !important}
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button *{
+  color:rgb(__DARK__) !important;-webkit-text-fill-color:rgb(__DARK__) !important}
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"],
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"]{
+  background:rgb(__STRONG__) !important;border-color:rgb(__STRONG__) !important}
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"] *,
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"] *,
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"],
+html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"]{
+  color:#fff !important;-webkit-text-fill-color:#fff !important}
+
 section[data-testid="stSidebar"] [data-baseweb="tag"]{background:rgb(__STRONG__) !important}
 section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"]{background-color:rgb(__SOFT__) !important}
 section[data-testid="stSidebar"] [data-testid="stSidebarContent"]{scrollbar-color:rgb(__SOFT__) rgba(255,255,255,.06) !important}
