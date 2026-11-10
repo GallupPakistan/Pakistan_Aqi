@@ -1,8 +1,11 @@
-# Always use the light Streamlit theme, whatever Chrome / the OS is set to.
-# (Without this, Streamlit follows the browser's dark mode and turns text white,
-#  which then disappears on the dashboard's light cards and pills.)
+# Force the light theme on Streamlit Cloud, whatever the viewer's browser/OS is set to.
+# NOTE: this file MUST live at  .streamlit/config.toml  (repo root/.streamlit/), not in the repo root.
 [theme]
 base = "light"
+primaryColor = "#3a6c54"
 backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#f0f2f6"
 textColor = "#1f2937"
+
+[server]
+headless = true
