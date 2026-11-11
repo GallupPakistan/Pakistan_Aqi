@@ -172,10 +172,8 @@ def render_disclaimer():
 
 
 def render_footer():
-    st.markdown(
-        '<div class="foot">Built by <b>Asad Shahid</b>, GIKI Graduate<br>'
-        '© 2026 Gallup Pakistan. All rights reserved.</div>',
-        unsafe_allow_html=True)
+    """Footer at the bottom of every page (credit lines removed on request; add text here to show one)."""
+    return
 
 
 # Which sidebar filters change each page (shown as a line of chips at the top of the page)
@@ -449,10 +447,6 @@ with st.sidebar.expander("Data files"):
         st.write((":green[found] " if find_file(_v) else ":red[missing] ") + _v)
     st.caption(f"Looking in: {BASE}")
 
-st.sidebar.markdown(
-    '<div style="font-size:.78rem;color:#9db8ff;margin-top:14px;text-align:center">'
-    'Built by Asad Shahid, GIKI Graduate</div>',
-    unsafe_allow_html=True)
 
 dflt = apply_daily(daily)
 hflt = apply_hourly(hourly)
