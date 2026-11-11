@@ -22,7 +22,7 @@ import streamlit as st
 
 import charts as ch
 from common import (AQI_BINS, AQI_COLORS, AQI_LABELS, F, WHO_24H, WHO_PM25_24H, WHO_PM25_ANNUAL, aqi_cat, download_csv,
-                    explain, hr12, insights, kpis, need, same_window, show, table)
+                    explain, hr12, insights, kpis, need, same_window, show, sticky_select, table)
 
 SMOKE, DUST, OZONE = "Smoke / fine particles (PM2.5)", "Dust / coarse particles (PM10)", "Ozone"
 DRIVER_COLORS = {SMOKE: "#5b6472", DUST: "#c8913a", OZONE: "#3fa7b5"}
@@ -185,9 +185,11 @@ def _fmt_range(a, b):
 def page_city_report(full, hourly):
     st.header("City Report Card")
     need(full, ["date", "city", "province", "pm2_5_avg", "pm10_avg", "us_aqi_avg"], "pakistan_air_quality_daily")
-    st.caption("Uses the full history of the chosen city, so the sidebar filters do not change this page.")
-    cities = sorted(full.city.unique())
-    city = st.selectbox("City", cities, index=cities.index("Lahore") if "Lahore" in cities else 0, key="report_city")
+    cities = sorted(c_ for c_ in full.city.unique() if c_ in set(F.get("city_options") or full.city.unique()))
+    if not cities:
+        st.warning("No cities in the selected provinces.")
+        return
+    city = sticky_select(st, "City", cities, "report_city", default="Lahore")
 
     d = with_drivers(full)
     c = d[d.city == city].sort_values("date")
@@ -412,13 +414,13 @@ def page_sources_trends(dflt, full):
     a, b = st.columns(2)
     with a:   # 4
         if "dust_avg" in d.columns:
-            du = d.groupby("city").dust_avg.mean().sort_values(ascending=False).head(10)
-            ch.bar(du.index, du.values, "4. The 10 dustiest cities", scale="#c8913a", key_note=False,
+            du = d.groupby("city").dust_avg.mean().sort_values(ascending=False).head(F["top_n"])
+            ch.bar(du.index, du.values, f"4. The {len(du)} dustiest cities", scale="#c8913a", key_note=False,
                    suffix=" µg/m³")
             ch.note("Average amount of desert dust in the air near the ground.")
     with b:   # 5
         if "no2_avg" in d.columns:
-            no = d.groupby("city").no2_avg.mean().sort_values(ascending=False).head(10)
+            no = d.groupby("city").no2_avg.mean().sort_values(ascending=False).head(F["top_n"])
             ch.bar(no.index, no.values, "5. Where is traffic pollution highest?", scale="#2a78d6", key_note=False,
                    fmt="{:.0f}", suffix=" µg/m³", ref=[(25, "WHO daily limit", "#1e9e5a")])
             ch.note("Average nitrogen dioxide (NO₂), a gas that comes mostly from vehicle exhaust and power "
@@ -486,8 +488,7 @@ def page_sources_trends(dflt, full):
 def page_episodes(full):
     st.header("Pollution Episodes")
     need(full, ["date", "city", "province", "pm2_5_avg", "pm10_avg", "us_aqi_avg"], "pakistan_air_quality_daily")
-    st.caption("An episode is a run of days in a row above the chosen AQI level. Province and Year filters apply; "
-               "month, season and category filters do not, because they would cut episodes in two.")
+    st.caption("An episode (bad spell) is a run of days in a row above the AQI level you choose below.")
     c1, c2 = st.columns(2)
     level = c1.selectbox("Daily AQI above", [150, 200, 300], index=1,
                          format_func=lambda v: f"{v} ({aqi_cat(v + 1)})", key="ep_level")
