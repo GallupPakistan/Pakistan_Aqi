@@ -63,7 +63,7 @@ def page_overview(daily, hourly=None, cities=None, full=None):
 
     # 3 + 4
     a, b = st.columns(2)
-    k = min(10, len(city))
+    k = min(F["top_n"], len(city))   # sidebar "Top N cities"
     with a:
         top = city.head(k)
         ch.bar(top.index, top.values, f"3. The {k} most polluted cities", scale="aqi", key_note=False)
