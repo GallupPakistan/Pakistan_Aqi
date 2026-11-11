@@ -78,3 +78,20 @@ peak of 13-15 Nov 2024) appear where they should.
 - **Data fix:** the hourly file's AQI is a rolling 24-hour value, so it cannot show which hour is worst.
   Hour-of-day charts and "safe / unhealthy hours" now use hourly PM2.5 (with the same EPA category limits).
 - Fixed an insight that said "cold days are dirtiest" when the data shows cool (10-20°C) days are.
+
+## v6 (11 Nov)
+- AQI values are rounded to whole numbers before they are put in categories (EPA rule), so 50.3 counts as
+  Good, not Moderate. Categories, the category filter and "AQI above 150" counts now always agree (affected
+  380 of 47,226 days).
+- Includes pakistan_aqi.py v3 (downloader): aqi_category from the daily average, aqi_category_peak from the
+  worst hour, and a check for missing days.
+
+## v7 (11 Nov) - filters
+- City choices now follow the Province filter everywhere (sidebar trend cities, City Report, Hourly chart 5,
+  Cities distance chart, Forecasting). Your own picks are kept while they are in the selected provinces;
+  if none are left, the most polluted cities of the new provinces are used.
+- Choices are remembered when you switch pages.
+- "Top N cities" now controls the ranking charts on Overview, Daily and Sources & Trends.
+- Every page shows which sidebar filters apply to it (blue) and which do not (grey, with the reason).
+- An empty filter result no longer blocks pages that do not use those filters (City Report, Hourly,
+  Episodes, Forecasting).
