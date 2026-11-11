@@ -146,6 +146,70 @@ def show(fig, h=380, legend="auto"):
         st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
 
 
+# ----------------------------------------------------------------------------
+# "Sticky" widgets: they remember the user's choice across pages and filter changes, keep any choice that is
+# still valid when the options change (e.g. after a province change), and fall back to a default otherwise.
+# ----------------------------------------------------------------------------
+def _remember(key):
+    return "_keep_" + key
+
+
+def _last(key):
+    """Latest choice: the widget's own value if it was on screen in the last run, else the remembered one."""
+    if key in st.session_state:
+        return st.session_state[key]
+    return st.session_state.get(_remember(key))
+
+
+def sticky_select(where, label, options, key, default=None, **kw):
+    options = list(options)
+    if not options:
+        return None
+    prev = _last(key)
+    if prev not in options:
+        prev = default if default in options else options[0]
+    st.session_state[key] = prev
+    val = where.selectbox(label, options, key=key, **kw)
+    st.session_state[_remember(key)] = val
+    return val
+
+
+def sticky_multi(where, label, options, key, default=(), **kw):
+    """Multiselect that follows its options. While the user has not changed it, it simply shows the current
+    default (e.g. the 5 most polluted cities of the selected provinces). Once the user picks cities, those are
+    kept as long as they are in the options; if none of them is left, it goes back to the default."""
+    options = list(options)
+    default = [x for x in default if x in options]
+    prev = _last(key)
+    auto = st.session_state.get("_auto_" + key, True) or prev is None
+    if not auto:
+        keep = [x for x in prev if x in options]
+        if not keep:
+            keep, auto = default, True
+    else:
+        keep = default
+    st.session_state[key] = keep
+    st.session_state["_auto_" + key] = auto
+    val = list(where.multiselect(label, options, key=key, on_change=_mark_user_choice, args=(key,), **kw))
+    st.session_state[_remember(key)] = val
+    return val
+
+
+def _mark_user_choice(key):
+    """Runs when the user edits a sticky multiselect: from now on their own choice is kept."""
+    st.session_state["_auto_" + key] = False
+
+
+def sticky_slider(where, label, lo, hi, key, default, **kw):
+    hi = max(hi, lo + 1)
+    prev = _last(key)
+    prev = default if prev is None else prev
+    st.session_state[key] = int(min(max(prev, lo), hi))
+    val = where.slider(label, lo, hi, key=key, **kw)
+    st.session_state[_remember(key)] = val
+    return val
+
+
 def table(df, hide_index=False):
     """st.dataframe that works on both new (width=) and old (use_container_width=) Streamlit."""
     try:
