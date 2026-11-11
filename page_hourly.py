@@ -13,7 +13,7 @@ import pandas as pd
 import streamlit as st
 
 import charts as ch
-from common import AQI_BINS, AQI_COLORS, AQI_LABELS, F, hr12, insights, kpis, need, season_sort
+from common import AQI_BINS, AQI_COLORS, AQI_LABELS, F, hr12, insights, kpis, need, season_sort, sticky_multi
 
 PARTS = ["Night (12-6 AM)", "Morning (6 AM-12 PM)", "Afternoon (12-6 PM)", "Evening (6 PM-12 AM)"]
 PART_LABELS = [p.replace(" (", "<br>(") for p in PARTS]   # two-line axis labels
@@ -94,7 +94,7 @@ def page_hourly(df):
     # 5
     city_opts = sorted(f.city.unique())
     default = hourly_agg(f, "city").nlargest(4, "pm2_5_avg").city.tolist()
-    sel = st.multiselect("Cities to compare (chart 5)", city_opts, default=default, key="hourly_cities")
+    sel = sticky_multi(st, "Cities to compare (chart 5)", city_opts, "hourly_cities", default=default)
     if sel:
         ch.lines([hr12(h) for h in range(24)],
                  {c: city_hour[city_hour.city == c].set_index("hour").pm2_5_avg.reindex(range(24)).values for c in sel},
