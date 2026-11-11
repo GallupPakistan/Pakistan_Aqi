@@ -91,60 +91,7 @@ def status_card(aqi, head, source, dot="#999"):
             f'<div class="sv">AQI {aqi:.0f} · {scope}</div></div>')
 
 
-# ----------------------------------------------------------------------------
-# Roaming smog clouds (pure CSS, no JavaScript). Clouds drift across the whole screen; they get denser and
-# darker as the AQI rises. Four layers: three drift OVER the page (they never block clicks) and one drifts
-# BEHIND the content card so it shows in the margins. Turned off by the sidebar toggle in app.py.
-# ----------------------------------------------------------------------------
-_FOG_TILE = "80vw"          # one cloud cluster repeats every 80vw, so the loop is seamless
-_PUFFS = {                  # (centre x %, centre y %, radius x %, radius y %, alpha)
-    "A": [(26, 52, 22, 42, .80), (40, 40, 18, 34, .70), (52, 58, 24, 44, .85), (66, 44, 18, 36, .70),
-          (76, 56, 15, 30, .60), (36, 62, 16, 28, .55)],
-    "B": [(24, 45, 17, 36, .75), (38, 58, 24, 46, .85), (55, 42, 20, 38, .75), (70, 60, 19, 34, .70),
-          (46, 50, 14, 28, .60), (78, 46, 12, 26, .55)],
-    "C": [(28, 56, 20, 40, .78), (44, 44, 22, 42, .82), (60, 58, 18, 34, .72), (74, 48, 16, 32, .65),
-          (34, 38, 12, 24, .55)],
-    "D": [(30, 50, 18, 38, .85), (50, 55, 24, 46, .90), (68, 45, 16, 32, .75), (40, 40, 13, 26, .60),
-          (76, 58, 13, 26, .55)],
-}
-
-
-def _puffs(rgb, key):
-    return ",".join(
-        f"radial-gradient(ellipse {rx}% {ry}% at {cx}% {cy}%, rgba({rgb},{a}) 0%, rgba({rgb},{a * .6:.2f}) 35%, "
-        f"rgba({rgb},0) 70%)" for cx, cy, rx, ry, a in _PUFFS[key])
-
-
-def fog_css(aqi):
-    v = float(np.clip(aqi, 0, 300)) / 300.0
-    base = _ip("smog", aqi)
-    rgb = _rgb(_mix(base, 0.30 * v, (128, 116, 98)))       # warm grey-brown tint as the air gets worse
-    a = 0.18 + 0.26 * v                                    # overall cloud strength: 0.18 (clean) .. 0.44 (hazardous)
-    P = _FOG_TILE
-    common = ("content:\"\";position:fixed;left:-100vw;width:300vw;pointer-events:none;background-repeat:repeat-x;"
-              f"background-size:{P} 100%;will-change:transform")
-    return f"""
-<style>
-/* ---------- roaming smog clouds ---------- */
-body::before,body::after,html::after,[data-testid="stAppViewContainer"]::before{{{common}}}
-body::before{{top:3vh;height:34vh;z-index:4;background-image:{_puffs(rgb, "A")};opacity:{a * .80:.2f};
-  animation:fogR 150s linear -40s infinite,fogBob 23s ease-in-out -6s infinite alternate}}
-body::after{{top:36vh;height:40vh;z-index:5;background-image:{_puffs(rgb, "B")};opacity:{a * .90:.2f};
-  animation:fogL 105s linear -70s infinite,fogBob 31s ease-in-out -12s infinite alternate-reverse}}
-html::after{{top:64vh;height:36vh;z-index:6;background-image:{_puffs(rgb, "C")};opacity:{a * .75:.2f};
-  animation:fogR 130s linear -90s infinite,fogBob 27s ease-in-out -3s infinite alternate}}
-[data-testid="stAppViewContainer"]::before{{top:18vh;height:56vh;z-index:-1;background-image:{_puffs(rgb, "D")};
-  opacity:{min(a * 1.5, .70):.2f};animation:fogL 85s linear -30s infinite,fogBob 35s ease-in-out -9s infinite alternate}}
-@keyframes fogR{{from{{transform:translate3d(0,0,0)}}to{{transform:translate3d({P},0,0)}}}}
-@keyframes fogL{{from{{transform:translate3d(0,0,0)}}to{{transform:translate3d(-{P},0,0)}}}}
-@keyframes fogBob{{from{{translate:0 -2.5vh}}to{{translate:0 3vh}}}}
-@media (prefers-reduced-motion: reduce){{body::before,body::after,html::after,
-  [data-testid="stAppViewContainer"]::before{{animation:none}}}}
-</style>
-"""
-
-
-def theme_css(aqi, fog=True):
+def theme_css(aqi):
     c = colors(aqi)
     sun, haze, veil, card = _ip("sun", aqi), _ip("haze", aqi), _ip("veil", aqi), _ip("card", aqi)
     brand = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none'>"
@@ -215,41 +162,6 @@ section[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked)
 section[data-testid="stSidebar"] button[data-testid*="pillsActive"],
 section[data-testid="stSidebar"] button[data-variant="pills"][aria-pressed="true"]{
   background:rgb(__STRONG__) !important;border-color:rgb(__STRONG__) !important}
-
-/* sidebar filter pills, built to stay readable in Streamlit's light AND dark themes (and in any browser light/dark mode):
-   inactive = light chip + dark text, active = solid accent + white text. Extra selectors + higher specificity so
-   Streamlit's own theme styles can't win, and text colours are set together with the background. */
-html body section[data-testid="stSidebar"] :is(button[data-testid="stBaseButton-pills"], button[kind="pills"]){
-  background:rgba(255,255,255,.92) !important;background-image:none !important;
-  border:1px solid rgba(__SOFT__,.75) !important;box-shadow:none !important}
-html body section[data-testid="stSidebar"] :is(button[data-testid="stBaseButton-pills"], button[kind="pills"]),
-html body section[data-testid="stSidebar"] :is(button[data-testid="stBaseButton-pills"], button[kind="pills"]) *{
-  color:rgb(__DARK__) !important;-webkit-text-fill-color:rgb(__DARK__) !important;opacity:1 !important}
-html body section[data-testid="stSidebar"] :is(button[data-testid="stBaseButton-pills"], button[kind="pills"]):hover{
-  background:rgb(__SOFT__) !important;border-color:rgb(__SOFT__) !important}
-html body section[data-testid="stSidebar"] :is(button[data-testid*="pillsActive"], button[kind="pillsActive"]){
-  background:rgb(__STRONG__) !important;background-image:none !important;
-  border:1px solid rgb(__STRONG__) !important;box-shadow:none !important}
-html body section[data-testid="stSidebar"] :is(button[data-testid*="pillsActive"], button[kind="pillsActive"]),
-html body section[data-testid="stSidebar"] :is(button[data-testid*="pillsActive"], button[kind="pillsActive"]) *{
-  color:#fff !important;-webkit-text-fill-color:#fff !important;opacity:1 !important}
-
-
-/* fallback for newer Streamlit DOM: pills container by key/testid, selected state via aria-pressed */
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button{
-  background:rgba(255,255,255,.92) !important;color:rgb(__DARK__) !important;-webkit-text-fill-color:rgb(__DARK__) !important;
-  border:1px solid rgba(__SOFT__,.75) !important}
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button *{
-  color:rgb(__DARK__) !important;-webkit-text-fill-color:rgb(__DARK__) !important}
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"],
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"]{
-  background:rgb(__STRONG__) !important;border-color:rgb(__STRONG__) !important}
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"] *,
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"] *,
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-pressed="true"],
-html body section[data-testid="stSidebar"] [data-testid="stPills"] button[aria-checked="true"]{
-  color:#fff !important;-webkit-text-fill-color:#fff !important}
-
 section[data-testid="stSidebar"] [data-baseweb="tag"]{background:rgb(__STRONG__) !important}
 section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"]{background-color:rgb(__SOFT__) !important}
 section[data-testid="stSidebar"] [data-testid="stSidebarContent"]{scrollbar-color:rgb(__SOFT__) rgba(255,255,255,.06) !important}
@@ -298,4 +210,4 @@ div[data-baseweb="tab-highlight"]{background-color:rgb(__STRONG__) !important}
     }
     for k, v in tokens.items():
         css = css.replace(k, v)
-    return css + (fog_css(aqi) if fog else "")
+    return css
