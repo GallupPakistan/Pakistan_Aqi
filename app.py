@@ -47,7 +47,7 @@ st.set_page_config(page_title="Pakistan Air Quality Intelligence", layout="wide"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (AQI_BINS, AQI_COLORS, AQI_LABELS, ATM, DEFAULT_FILES, F, BASE, aqi_cat, find_file, load,
-                    prep_daily, reset_atm, season_sort)
+                    prep_daily, reset_atm, season_sort, sticky_multi, sticky_slider)
 from page_cities import page_cities
 from page_daily import page_daily, page_forecast
 from page_overview import page_overview
@@ -176,6 +176,41 @@ def render_footer():
         '<div class="foot">Built by <b>Asad Shahid</b>, GIKI Graduate<br>'
         '© 2026 Gallup Pakistan. All rights reserved.</div>',
         unsafe_allow_html=True)
+
+
+# Which sidebar filters change each page (shown as a line of chips at the top of the page)
+FILTER_NAMES = ["Year", "Province", "Season", "Month", "AQI category", "Trend cities", "Top N"]
+PAGE_FILTERS = {
+    "Overview": {"Year", "Province", "Season", "Month", "AQI category", "Top N"},
+    "City Report": {"Province"},
+    "Daily Air Quality": {"Year", "Province", "Season", "Month", "AQI category", "Trend cities", "Top N"},
+    "Hourly Profile": {"Province", "Season", "Month"},
+    "Sources & Trends": {"Year", "Province", "Season", "Month", "AQI category", "Top N"},
+    "Smog Episodes": {"Year", "Province"},
+    "Cities": {"Year", "Province", "Season", "Month", "AQI category"},
+    "Forecasting": {"Province"},
+}
+FILTER_WHY = {
+    "City Report": "the report always uses the city's full history",
+    "Hourly Profile": "the hourly file is an average over all years and has no daily AQI category",
+    "Smog Episodes": "month, season and category would cut episodes in two",
+    "Forecasting": "a forecast needs the whole timeline",
+}
+
+
+def filter_chips(page):
+    used = PAGE_FILTERS.get(page, set())
+    chips = "".join(
+        f'<span style="display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border-radius:999px;'
+        f'font-size:.76rem;font-weight:600;'
+        + ("background:#2f6fd6;color:#fff" if n in used else
+           "background:rgba(120,130,150,.15);color:#8a93a3;text-decoration:line-through") + f'">{n}</span>'
+        for n in FILTER_NAMES)
+    why = FILTER_WHY.get(page)
+    st.markdown(f'<div style="margin:-4px 0 14px 0;font-size:.8rem"><span style="opacity:.75;margin-right:6px">'
+                f'Sidebar filters on this page:</span>{chips}'
+                + (f'<div style="opacity:.7;margin-top:3px">Grey filters do not apply here because {why}.</div>'
+                   if why else "") + '</div>', unsafe_allow_html=True)
 
 
 def run_page(fn, data, name, *extra):
@@ -372,11 +407,13 @@ def sidebar_filters(d):
     stats = d[d.province.isin(F["provs"])].groupby("city").us_aqi_avg.mean().sort_values(ascending=False)
     opts = list(stats.index)
     st.sidebar.markdown('<div class="pf-h">CITIES (TREND CHART)</div>', unsafe_allow_html=True)
-    F["trend_cities"] = st.sidebar.multiselect("Cities (for trend chart)", opts, default=opts[:5],
-                                               label_visibility="collapsed",
-                                               help="Cities drawn on the trend line charts. Default: 5 most polluted.")
+    F["city_options"] = opts   # cities in the selected provinces, most polluted first (used by every page)
+    F["trend_cities"] = sticky_multi(st.sidebar, "Cities (for trend chart)", opts, "f_trend_cities",
+                                     default=opts[:5], label_visibility="collapsed",
+                                     help="Cities drawn on the trend line charts. Choices that are not in the "
+                                          "selected provinces are removed automatically.")
     n = max(2, len(opts))
-    F["top_n"] = st.sidebar.slider("Top N Cities (bar/heatmap charts)", 1, n, min(10, n))
+    F["top_n"] = sticky_slider(st.sidebar, "Top N cities (ranking charts)", 1, n, "f_top_n", min(10, n))
     seasons_all = season_sort(d.season.dropna().unique())
     F["n_seasons"] = len(seasons_all)
     F["seasons"] = pill_filter("SEASON", seasons_all, "All Seasons", "f_seasons")
@@ -407,10 +444,6 @@ def apply_hourly(h):
 
 
 sidebar_filters(daily)
-st.sidebar.markdown('<div class="pf-h">SMOG CLOUDS</div>', unsafe_allow_html=True)
-_fog_ctl = st.sidebar.toggle if hasattr(st.sidebar, "toggle") else st.sidebar.checkbox
-FOG_ON = _fog_ctl("Roaming smog clouds", value=True, key="fog_on",
-                  help="Animated smog drifting across the page. It gets denser as the AQI rises. Turn off for a calm page.")
 with st.sidebar.expander("Data files"):
     for _k, _v in DEFAULT_FILES.items():
         st.write((":green[found] " if find_file(_v) else ":red[missing] ") + _v)
@@ -439,7 +472,7 @@ def paint(aqi, source):
     cat = aqi_cat(aqi)
     dot = AQI_COLORS.get(cat, "#999")
     set_plotly_colors(aqi)
-    atm_slot.markdown(theme_css(aqi, FOG_ON), unsafe_allow_html=True)
+    atm_slot.markdown(theme_css(aqi), unsafe_allow_html=True)
     render_banner(banner_slot, aqi, source, page)
     side_status.markdown(status_card(aqi, HEALTH.get(cat, ("Air quality", ""))[0], source, dot),
                          unsafe_allow_html=True)
@@ -456,27 +489,27 @@ else:
 paint(*early)
 
 with st.spinner(f"Loading {page}..."):   # loading sign shown while a tab is being built
-    if dflt is not None and dflt.empty:
+    filter_chips(page)
+    uses_filtered_days = page in ("Overview", "Daily Air Quality", "Sources & Trends", "Cities")
+    if uses_filtered_days and dflt is not None and dflt.empty:
         st.warning("No records match the current filters. Widen the filters in the sidebar.")
     elif page == "Overview":
         page_overview(dflt, hflt, cities, daily)
     elif page == "Daily Air Quality":
         run_page(page_daily, dflt, DEFAULT_FILES["daily"])
     elif page == "Hourly Profile":
-        st.caption("The hourly file is an average over all years, so the Year and AQI-category filters do not apply "
-                   "here; Province, Season and Month filters do.")
         run_page(page_hourly, hflt, DEFAULT_FILES["hourly"])
     elif page == "City Report":
-        run_page(page_city_report, daily, DEFAULT_FILES["daily"], hourly)
+        run_page(page_city_report, daily, DEFAULT_FILES["daily"], hourly)   # city list follows Province
     elif page == "Sources & Trends":
         run_page(page_sources_trends, dflt, DEFAULT_FILES["daily"], daily)
     elif page == "Smog Episodes":
         run_page(page_episodes, daily, DEFAULT_FILES["daily"])
     elif page == "Cities":
         run_page(page_cities, cities, DEFAULT_FILES["cities"], dflt, F["provs"])
-    else:
-        st.caption("Forecasting uses the full history of the selected city, regardless of the sidebar filters.")
-        run_page(page_forecast, daily, DEFAULT_FILES["daily"])
+    else:   # forecasting needs the whole timeline, so only the Province filter applies
+        run_page(page_forecast, daily[daily.province.isin(F["provs"])] if daily is not None else None,
+                 DEFAULT_FILES["daily"])
 
 final = (ATM["aqi"], ATM["src"]) if ATM["aqi"] is not None else (filter_aqi(), "filters")
 if round(final[0]) != round(early[0]) or final[1] != early[1]:
