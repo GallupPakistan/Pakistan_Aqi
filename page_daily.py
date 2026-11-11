@@ -13,7 +13,7 @@ import streamlit as st
 
 import charts as ch
 from common import (AQI_BINS, AQI_COLORS, AQI_LABELS, AQI_SCALE_MAX, ATM, F, WHO_24H, WHO_PM25_24H, WHO_PM25_ANNUAL,
-                    aqi_cat, explain, fmt_aqi, insights, kpis, need, season_sort, show, table)
+                    aqi_cat, explain, fmt_aqi, insights, kpis, need, season_sort, show, sticky_select, table)
 
 NEUTRAL_BLUE = "#4f6d8f"
 
@@ -365,7 +365,9 @@ dates one and two years earlier (the season the forecast is heading into), and t
     st.markdown("##### Choose what to forecast")
     metrics = [m for m in METRIC_LABELS if m in df.columns]
     c1, c2, c3, c4 = st.columns(4)
-    city = c1.selectbox("City", ["All cities (average)"] + sorted(df.city.unique()))
+    city = sticky_select(c1, "City", ["All cities (average)"] + sorted(df.city.unique()), "fc_city",
+                         default="All cities (average)",
+                         help="Only cities in the provinces selected in the sidebar. 'All cities' is their average.")
     metric = c2.selectbox("Measure", metrics, format_func=lambda m: METRIC_LABELS[m])
     horizon = c3.slider("Days ahead (forecast horizon)", 7, 180, 30,
                         help="How many days into the future to predict.")
