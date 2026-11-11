@@ -1,0 +1,6 @@
+[theme]
+# Neutral accent for sliders, tabs and multiselect tags (the page colours themselves come from theme.py)
+primaryColor = "#4a5568"
+
+[browser]
+gatherUsageStats = false
