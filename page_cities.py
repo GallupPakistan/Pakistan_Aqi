@@ -11,7 +11,8 @@ import plotly.express as px
 import streamlit as st
 
 import charts as ch
-from common import AQI_COLORS, AQI_LABELS, WHO_PM25_ANNUAL, aqi_cat, haversine, insights, kpis, need, show
+from common import (AQI_COLORS, AQI_LABELS, WHO_PM25_ANNUAL, aqi_cat, haversine, insights, kpis, need, show,
+                    sticky_select)
 
 PROV_COLORS = {"Punjab": "#2a78d6", "Sindh": "#eb6834", "Khyber Pakhtunkhwa": "#0f766e", "Balochistan": "#a16207",
                "Islamabad": "#7c3aed", "Gilgit-Baltistan": "#4d7c0f", "Azad Kashmir": "#be185d"}
@@ -83,8 +84,7 @@ def page_cities(cities, daily, provs=None):
                 "by fewer points, so treat their averages with care.")
         # 4
         ref_opts = sorted(c.city)
-        ref = st.selectbox("Distance from (chart 4)", ref_opts,
-                           index=ref_opts.index("Lahore") if "Lahore" in ref_opts else 0, key="dist_ref")
+        ref = sticky_select(st, "Distance from (chart 4)", ref_opts, "dist_ref", default="Lahore")
         rr = c[c.city == ref].iloc[0]
         dist = c.assign(km=haversine(rr.latitude, rr.longitude, c.latitude, c.longitude))
         dist = dist[dist.city != ref].sort_values("km").head(12)
