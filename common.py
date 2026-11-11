@@ -84,6 +84,11 @@ def prep_daily(df):
     df = df.copy()
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df = df.dropna(subset=["date"]).sort_values(["city", "date"])
+    # The US AQI is reported as a whole number (EPA rule): round once here so categories, filters and
+    # "AQI above 150" style counts all treat a day the same way (e.g. 50.3 -> 50 -> Good).
+    for col in ("us_aqi_avg", "us_aqi_max"):
+        if col in df.columns:
+            df[col] = np.floor(pd.to_numeric(df[col], errors="coerce") + 0.5)
     return df
 
 
@@ -194,9 +199,10 @@ def need(df, cols, name):
 
 
 def aqi_cat(v):
+    """Category of an AQI value, rounded to a whole number first (EPA rule), so an average of 50.3 is Good."""
     if pd.isna(v):
         return "n/a"
-    return AQI_LABELS[int(np.digitize(v, AQI_BINS[1:-1], right=True))]
+    return AQI_LABELS[int(np.digitize(np.floor(float(v) + 0.5), AQI_BINS[1:-1], right=True))]
 
 
 def hr12(h):
