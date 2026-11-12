@@ -41,7 +41,24 @@ if __name__ == "__main__" and not _inside_streamlit():
     sys.exit(stcli.main())
 
 # Must be the first Streamlit command
-st.set_page_config(page_title="Pakistan Air Quality Intelligence", layout="wide")
+def _asset(name):
+    """Path of an image next to app.py (e.g. logo.png), or None if it is not there."""
+    p = Path(__file__).resolve().parent / name
+    return p if p.exists() else None
+
+
+def _img_b64(path):
+    import base64
+    return base64.b64encode(path.read_bytes()).decode()
+
+
+_ICON = _asset("logo_icon.png")
+try:
+    from PIL import Image as _PILImage
+    _page_icon = _PILImage.open(_ICON) if _ICON else None
+except Exception:
+    _page_icon = None
+st.set_page_config(page_title="Pakistan Air Quality Intelligence", layout="wide", page_icon=_page_icon)
 
 # Make sure sibling modules can be imported
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -75,8 +92,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.sidebar.markdown('<div class="brand"><div class="mark"></div><div><div class="b1">GALLUP PAKISTAN</div>'
-                    '<div class="b2">Air Quality Analytics</div></div></div>', unsafe_allow_html=True)
+# Company logo at the top of the sidebar: replace logo.png in this folder to change it.
+_LOGO = _asset("logo.png")
+if _LOGO:
+    st.sidebar.markdown(f'<div class="brand-logo"><img src="data:image/png;base64,{_img_b64(_LOGO)}" '
+                        f'alt="Gallup Pakistan Digital Analytics"><div class="b2">Air Quality Analytics</div></div>',
+                        unsafe_allow_html=True)
+else:
+    st.sidebar.markdown('<div class="brand"><div class="mark"></div><div><div class="b1">GALLUP PAKISTAN</div>'
+                        '<div class="b2">Air Quality Analytics</div></div></div>', unsafe_allow_html=True)
 side_status = st.sidebar.empty()   # coloured air-status card (filled by paint())
 
 # ----------------------------------------------------------------------------
@@ -271,6 +295,9 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] input{color:#111 !im
 .brand .mark{width:40px;height:40px;flex:none;background-size:contain;background-repeat:no-repeat;
   background-image:url("data:image/svg+xml,__BRAND__")}
 .brand .b1{font-size:.95rem;font-weight:700;letter-spacing:.16em;color:#fff}
+.brand-logo{margin:0 0 14px 0;text-align:left}
+.brand-logo img{width:100%;max-width:260px;height:auto;display:block}
+.brand-logo .b2{font-size:.78rem;color:#9db8ff;letter-spacing:.06em;margin:6px 0 0 2px}
 .brand .b2{font-size:.78rem;color:#9db8ff;letter-spacing:.04em;margin-top:2px}
 .side-h{font-size:.74rem;letter-spacing:.2em;color:#9db8ff;margin:12px 0 6px 0;padding-bottom:6px;
   border-bottom:1px solid rgba(157,184,255,.25)}
