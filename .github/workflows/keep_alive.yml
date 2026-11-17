@@ -25,7 +25,7 @@ jobs:
           python <<'EOF'
           from playwright.sync_api import sync_playwright
 
-          APP_URL = "https://aid-in-perspective-who-pays-for-education-health-in-pakistan.streamlit.app/"  # e.g. https://phc-dasboard-xxxx.streamlit.app/
+          APP_URL = "https://pakistanaqi.streamlit.app/"  # e.g. https://phc-dasboard-xxxx.streamlit.app/
 
           with sync_playwright() as p:
               browser = p.chromium.launch()
